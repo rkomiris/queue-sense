@@ -252,6 +252,228 @@ export const adminInsights = [
   },
 ];
 
+export type OptimizationLever = {
+  id: string;
+  target: ServiceCard['category'] | 'any';
+  label: string;
+  description: string;
+  investmentHours: number;
+  investmentCost: number;
+  projectedSavings: number;
+  roiMultiple: number;
+};
+
+export const optimizationLevers: OptimizationLever[] = [
+  {
+    id: 'express-lane',
+    target: 'healthcare',
+    label: 'Express triage lane',
+    description: 'Stand up a high-throughput fast-track with a float RN and mobile intake prompts.',
+    investmentHours: 16,
+    investmentCost: 5400,
+    projectedSavings: 22000,
+    roiMultiple: 4.1,
+  },
+  {
+    id: 'precheck-sms',
+    target: 'government',
+    label: 'Mobile pre-check push',
+    description: 'Shift renewals to self-serve kiosks via SMS nudges and queue ETA transparency.',
+    investmentHours: 12,
+    investmentCost: 3200,
+    projectedSavings: 16800,
+    roiMultiple: 5.2,
+  },
+  {
+    id: 'campus-orchestration',
+    target: 'campus',
+    label: 'Orchestration war room',
+    description: 'Spin up a shared ops channel routing student services to lighter-touch offices.',
+    investmentHours: 20,
+    investmentCost: 6100,
+    projectedSavings: 19500,
+    roiMultiple: 3.2,
+  },
+  {
+    id: 'any-staffing',
+    target: 'any',
+    label: 'Adaptive staffing ritual',
+    description: 'Weekly 30-min review to rebalance schedules using QueueSense arrival curves.',
+    investmentHours: 8,
+    investmentCost: 1800,
+    projectedSavings: 8400,
+    roiMultiple: 3.6,
+  },
+  {
+    id: 'analytics-upskill',
+    target: 'any',
+    label: 'Analyst upskill sprint',
+    description: 'Train ops leads on anomaly guardrails for proactive queue interventions.',
+    investmentHours: 10,
+    investmentCost: 2500,
+    projectedSavings: 12600,
+    roiMultiple: 4.0,
+  },
+];
+
+export type ProfitTimelinePoint = {
+  month: string;
+  baselineCost: number;
+  optimizedCost: number;
+  investments: number;
+};
+
+export const profitTimeline: ProfitTimelinePoint[] = [
+  { month: 'Jan', baselineCost: 86000, optimizedCost: 85200, investments: 2400 },
+  { month: 'Feb', baselineCost: 88500, optimizedCost: 87000, investments: 2600 },
+  { month: 'Mar', baselineCost: 92000, optimizedCost: 91000, investments: 3000 },
+  { month: 'Apr', baselineCost: 96500, optimizedCost: 92800, investments: 3200 },
+  { month: 'May', baselineCost: 101200, optimizedCost: 94600, investments: 3500 },
+  { month: 'Jun', baselineCost: 106400, optimizedCost: 95200, investments: 4100 },
+  { month: 'Jul', baselineCost: 110000, optimizedCost: 94900, investments: 4300 },
+  { month: 'Aug', baselineCost: 112500, optimizedCost: 93200, investments: 3800 },
+  { month: 'Sep', baselineCost: 111800, optimizedCost: 91800, investments: 3600 },
+  { month: 'Oct', baselineCost: 109900, optimizedCost: 90400, investments: 3400 },
+  { month: 'Nov', baselineCost: 108400, optimizedCost: 89000, investments: 3200 },
+  { month: 'Dec', baselineCost: 109200, optimizedCost: 88200, investments: 3100 },
+];
+
+export type InitiativeAttribution = {
+  leverId: string;
+  label: string;
+  savings: number;
+  investment: number;
+  owners: string[];
+};
+
+export const initiativeAttribution: InitiativeAttribution[] = [
+  {
+    leverId: 'express-lane',
+    label: 'Fast-track staffing remix',
+    savings: 42000,
+    investment: 8800,
+    owners: ['Clinical ops', 'Float team'],
+  },
+  {
+    leverId: 'precheck-sms',
+    label: 'DMV mobile pre-check',
+    savings: 36000,
+    investment: 7200,
+    owners: ['Digital team', 'Field ops'],
+  },
+  {
+    leverId: 'campus-orchestration',
+    label: 'Campus orchestration',
+    savings: 28000,
+    investment: 6100,
+    owners: ['Student services'],
+  },
+  {
+    leverId: 'any-staffing',
+    label: 'Adaptive staffing ritual',
+    savings: 26000,
+    investment: 3600,
+    owners: ['Ops excellence'],
+  },
+  {
+    leverId: 'analytics-upskill',
+    label: 'Analytics enablement',
+    savings: 24000,
+    investment: 2500,
+    owners: ['Data team'],
+  },
+  {
+    leverId: 'express-lane',
+    label: 'Mobile intake refresh',
+    savings: 21000,
+    investment: 1800,
+    owners: ['Product', 'Clinic experience'],
+  },
+  {
+    leverId: 'precheck-sms',
+    label: 'Auto kiosk orchestration',
+    savings: 19000,
+    investment: 2100,
+    owners: ['Gov ops', 'Field support'],
+  },
+];
+
+export type LocationBenchmark = {
+  id: string;
+  label: string;
+  costPerVisit: number;
+  throughput: number;
+  satisfaction: number;
+  automationRate: number;
+  category: ServiceCard['category'];
+};
+
+export const locationBenchmarks: LocationBenchmark[] = [
+  {
+    id: 'bench-gv',
+    label: 'Green Valley Clinic',
+    costPerVisit: 118,
+    throughput: 72,
+    satisfaction: 86,
+    automationRate: 0.64,
+    category: 'healthcare',
+  },
+  {
+    id: 'bench-dmv1',
+    label: 'State DMV Central',
+    costPerVisit: 96,
+    throughput: 140,
+    satisfaction: 73,
+    automationRate: 0.42,
+    category: 'government',
+  },
+  {
+    id: 'bench-dmv2',
+    label: 'Concord DMV Express',
+    costPerVisit: 82,
+    throughput: 118,
+    satisfaction: 78,
+    automationRate: 0.58,
+    category: 'government',
+  },
+  {
+    id: 'bench-campus',
+    label: 'Winding Ridge University',
+    costPerVisit: 74,
+    throughput: 210,
+    satisfaction: 91,
+    automationRate: 0.71,
+    category: 'campus',
+  },
+  {
+    id: 'bench-colby',
+    label: 'New England College Hub',
+    costPerVisit: 69,
+    throughput: 188,
+    satisfaction: 88,
+    automationRate: 0.76,
+    category: 'campus',
+  },
+  {
+    id: 'bench-urgent',
+    label: 'Capital UrgentCare',
+    costPerVisit: 124,
+    throughput: 64,
+    satisfaction: 82,
+    automationRate: 0.48,
+    category: 'healthcare',
+  },
+  {
+    id: 'bench-airport',
+    label: 'Metro Airport PreCheck',
+    costPerVisit: 88,
+    throughput: 156,
+    satisfaction: 79,
+    automationRate: 0.67,
+    category: 'government',
+  },
+];
+
 export const systemDiagram = [
   {
     id: 'inputs',

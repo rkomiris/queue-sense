@@ -1,9 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { serviceCards, ServiceCard } from '../data/mockWaitTimes';
+import { LocationProvider } from '../context/LocationContext';
+import { resolveOrganization } from '../utils/env';
 
-const categories: Array<ServiceCard['category']> = ['healthcare', 'government', 'campus'];
+const categoryLabels: Record<ServiceCard['category'], string> = {
+  healthcare: 'Healthcare',
+  government: 'Government',
+  campus: 'Campus',
+};
 
 const coreNav = [
   { label: 'Home', to: '/home' },
@@ -19,31 +25,46 @@ export const AppLayout = () => {
   const location = useLocation();
   const firstName = user?.username?.split('@')[0]?.replace('.', ' ') ?? 'friend';
   const links = user?.role === 'org-admin' ? adminNav : coreNav;
-  const [locationQueries, setLocationQueries] = useState<Record<string, string>>(
-    categories.reduce((acc, category) => ({ ...acc, [category]: '' }), {})
+  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [locationQuery, setLocationQuery] = useState('');
+  const accessibleCards = useMemo(() => {
+    if (user?.role !== 'org-admin') {
+      return serviceCards;
+    }
+    const orgCategory = resolveOrganization(user.orgId)?.vertical?.toLowerCase() as ServiceCard['category'] | undefined;
+    if (!orgCategory) {
+      return serviceCards;
+    }
+    return serviceCards.filter((card) => card.category === orgCategory);
+  }, [user]);
+  const selectedLocation = useMemo(
+    () => accessibleCards.find((card) => card.id === selectedLocationId) ?? null,
+    [accessibleCards, selectedLocationId]
   );
-  const groupedLocations = useMemo(
+  useEffect(() => {
+    if (selectedLocationId && !selectedLocation) {
+      setSelectedLocationId(null);
+    }
+  }, [selectedLocation, selectedLocationId]);
+  const filteredLocations = useMemo(
     () =>
-      categories.map((category) => ({
-        category,
-        items: serviceCards
-          .filter(
-            (card) =>
-              card.category === category &&
-              card.location.toLowerCase().includes(locationQueries[category].toLowerCase())
-          )
-          .map((card) => ({
-            label: card.location,
-            wait: card.waitTime,
-            to: card.detailRoute,
-          })),
-          })),
-    [locationQueries]
+      accessibleCards
+        .filter((card) => card.location.toLowerCase().includes(locationQuery.toLowerCase()))
+        .map((card) => ({
+          id: card.id,
+          label: card.location,
+          wait: card.waitTime,
+          to: card.detailRoute,
+          categoryLabel: categoryLabels[card.category],
+        })),
+    [accessibleCards, locationQuery]
   );
+  const showLocationList = user?.role !== 'org-admin';
 
   return (
-    <div className="app-shell">
-      <aside className="sidebar">
+    <LocationProvider value={{ selectedLocation, setSelectedLocationId, availableLocations: accessibleCards }}>
+      <div className="app-shell">
+        <aside className="sidebar">
         <div className="brand">
           <div className="logo-dot" />
           <div>
@@ -73,46 +94,44 @@ export const AppLayout = () => {
               <span>{link.label}</span>
             </NavLink>
           ))}
-          <div className="nav-section">
-            <p className="eyebrow">Locations</p>
-            {groupedLocations.map((group) => (
-              <div key={group.category} className="location-group">
+          {showLocationList && (
+            <div className="nav-section">
+              <p className="eyebrow">Locations</p>
+              <div className="location-group">
                 <div className="location-group-header">
-                  <span>{group.category === 'healthcare' ? 'Healthcare' : group.category === 'government' ? 'Government' : 'Campus'}</span>
+                  <span>All locations</span>
                   <input
                     className="location-search"
                     type="search"
-                    placeholder={`Search ${group.category}`}
-                    value={locationQueries[group.category]}
-                    onChange={(event) =>
-                      setLocationQueries((prev) => ({
-                        ...prev,
-                        [group.category]: event.target.value,
-                      }))
-                    }
+                    placeholder="Search locations"
+                    value={locationQuery}
+                    onChange={(event) => setLocationQuery(event.target.value)}
                   />
                 </div>
                 <div className="location-list">
-                  {group.items.map((location) => (
-                    <NavLink key={location.label} to={location.to} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
+                  {filteredLocations.map((location) => (
+                    <NavLink key={location.id} to={location.to} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
                       <div>
                         <span>{location.label}</span>
-                        <p>{location.wait} min</p>
+                        <p>
+                          {location.wait} min · {location.categoryLabel}
+                        </p>
                       </div>
                     </NavLink>
                   ))}
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          )}
         </nav>
-        <button className="logout-btn" onClick={logout}>
-          Log out
-        </button>
-      </aside>
-      <main className="content" data-path={location.pathname}>
-        <Outlet />
-      </main>
-    </div>
+          <button className="logout-btn" onClick={logout}>
+            Log out
+          </button>
+        </aside>
+        <main className="content" data-path={location.pathname}>
+          <Outlet />
+        </main>
+      </div>
+    </LocationProvider>
   );
 };

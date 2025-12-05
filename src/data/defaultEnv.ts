@@ -16,6 +16,12 @@ export const defaultUsers = [
     role: 'org-admin' as const,
     orgId: 'gov-001',
   },
+  {
+    username: 'campus-admin@queuesense.com',
+    password: 'campus123',
+    role: 'org-admin' as const,
+    orgId: 'campus-001',
+  },
 ];
 
 export const defaultOrganizations = [
@@ -30,6 +36,12 @@ export const defaultOrganizations = [
     displayName: 'State DMV Office',
     vertical: 'Government',
     city: 'Cedar Park, TX',
+  },
+  {
+    orgId: 'campus-001',
+    displayName: 'Northeast University Network',
+    vertical: 'Campus',
+    city: 'Boston, MA',
   },
 ];
 

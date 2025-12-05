@@ -157,15 +157,6 @@ export const LoginScreen = () => {
               </div>
             </div>
           </div>
-          <div className="hero-visual">
-            {signalCards.map((signal) => (
-              <article key={signal.label}>
-                <p className="eyebrow">{signal.label}</p>
-                <h3>{signal.wait}</h3>
-                <p>{signal.detail}</p>
-              </article>
-            ))}
-          </div>
         </section>
 
         <section className="signal-row">

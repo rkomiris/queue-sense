@@ -62,6 +62,46 @@ Once deployed, capture the site URL (e.g., `https://queuesense-demo.netlify.app`
 
 Mocked data lives in `src/data/mockWaitTimes.ts` and can be swapped for updated narratives without touching presentation logic.
 
+## Admin Analytics Deep Dive
+The admin dashboard (`/dashboard`) evolved into a FinOps-style command center. Each visualization tells a specific operational ROI story:
+
+### Profit Runway Modeling
+- **What it shows**: Monthly baseline operating cost, optimized plan, modeled scenario, and capital investments.
+- **Data source**: `profitTimeline` synthesizes a 12-month view with baseline, optimized, and per-month investment values.
+- **How it works**: Admins toggle optimization levers; the scenario line recomputes savings vs. the optimized budget using lever ROI, location pressure, and queue state. The stacked chart uses layered gradients for clarity and thick dots to emphasize intercept points.
+- **Why it matters**: Reveals payback arc for the current experimentation stack, making it obvious why a queue program deserves funding.
+
+### Scenario Lever Panel
+- **What it shows**: Toggle buttons representing available optimization plays (triage lanes, SMS pre-check, staffing rituals, etc.).
+- **Data source**: `buildRoiPlans` converts each `optimizationLever` into a scenario-ready object with effort, cost, savings, and payback.
+- **How it works**: Selecting a lever adjusts modeled cumulative savings/investment metrics and updates the scenario line above.
+
+### Wait-Time Curve
+- **What it shows**: Live 12-hour wait history per location (or aggregate) with gradient fill for variance recognition.
+- **Data source**: `adminTrend` when no location is selected; location-specific curves when focused.
+- **How it works**: Uses Recharts with gradients and tooltips to show granular wait data—useful to see how interventions change queue shape.
+
+### Insight Cards
+- **What they show**: Narrative highlights (“Peak at 11:15 AM”, “Engagement is sticky”) backed by the `adminInsights` array.
+- **Purpose**: Provide context around the numbers, focusing on predictive wins and consumer engagement.
+
+### Optimization ROI Grid
+- **What it shows**: ROI cards for each lever with effort hours, investment, projected monthly lift, and payback window.
+- **Data source**: `optimizationLevers` + location state (pressure, trend).
+- **How it works**: The cards reuse the same scenario computations, exposing the math that feeds the profit runway.
+
+### Initiative Attribution
+- **What it shows**: A grid of savings contributions by initiative with owners and investment notes.
+- **Data source**: `initiativeAttribution` entries mapping lever → savings/investment.
+- **Why it matters**: Communicates cross-functional impact so stakeholders know who’s driving value.
+
+### Location Benchmarks
+- **What it shows**: Table comparing cost per visit, throughput, and automation for each location (filtered by vertical for admins).
+- **Data source**: `locationBenchmarks`.
+- **Purpose**: Gives leaders a league-table view of performance to prioritize investment or celebrate wins.
+
+All charts are powered by Recharts with custom gradients, drop shadows, and accessible tooltips. Every metric feeds from deterministic data pipelines wired up for this environment.
+
 ## Screenshots
 Place exported page captures under `docs/screenshots/` (one per route). A helper checklist lives in `docs/screenshots/README.md` to keep quality consistent.
 
