@@ -5,6 +5,7 @@ import { FiActivity, FiAward, FiMapPin, FiWatch } from 'react-icons/fi';
 import { PageHeader } from '../components/PageHeader';
 import { ServiceQuickCard } from '../components/ServiceCard';
 import { serviceCards, smartNotifications } from '../data/mockWaitTimes';
+import { useState } from 'react';
 
 type IconComponent = (props: IconBaseProps) => ReactElement;
 
@@ -17,13 +18,36 @@ const icons: Record<string, IconComponent> = {
 };
 
 export const HomeDashboard = () => {
+  const [filter, setFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  const segments = ['all', 'healthcare', 'government', 'campus'];
+  const filteredCards = serviceCards.filter((card) => {
+    if (filter === 'all') {
+      return true;
+    }
+    return card.category === filter;
+  }).filter((card) => card.location.toLowerCase().includes(searchTerm.toLowerCase()) || card.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
     <section className="page-grid">
       <PageHeader title="Real-time wait intelligence" subtitle="Consumer hero view" />
+      <div className="filter-row">
+        {segments.map((segment) => (
+          <button key={segment} className={segment === filter ? 'filter-pill active' : 'filter-pill'} onClick={() => setFilter(segment)}>
+            {segment === 'all' ? 'All' : segment.charAt(0).toUpperCase() + segment.slice(1)}
+          </button>
+        ))}
+        <input
+          className="filter-search"
+          type="search"
+          placeholder={`Search ${filter === 'all' ? 'any location' : filter}`}
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+        />
+      </div>
       <div className="grid service-grid">
-        {serviceCards.map((card) => {
+        {filteredCards.map((card) => {
           const Icon = icons[card.id] || icons.default;
           return (
             <button
