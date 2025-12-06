@@ -12,8 +12,17 @@ type IconComponent = (props: IconBaseProps) => ReactElement;
 const icons: Record<string, IconComponent> = {
   'urgent-care': FiActivity as IconComponent,
   pharmacy: FiWatch as IconComponent,
+  'henniker-clinic': FiActivity as IconComponent,
+  'capital-urgent': FiActivity as IconComponent,
+  'north-shore-clinic': FiActivity as IconComponent,
   dmv: FiMapPin as IconComponent,
+  'concord-dmv': FiMapPin as IconComponent,
+  airport: FiMapPin as IconComponent,
+  'city-hall': FiMapPin as IconComponent,
+  'city-hub-dmv': FiMapPin as IconComponent,
   campus: FiAward as IconComponent,
+  'colby-campus': FiAward as IconComponent,
+  'ivy-campus': FiAward as IconComponent,
   default: FiActivity as IconComponent,
 };
 
@@ -54,7 +63,7 @@ export const HomeDashboard = () => {
               key={card.id}
               type="button"
               className="card-button"
-              onClick={() => navigate(card.detailRoute)}
+              onClick={() => navigate(`${card.detailRoute}?site=${card.id}`)}
             >
               <ServiceQuickCard data={card} icon={<Icon />} />
               <span className="cta">View details →</span>

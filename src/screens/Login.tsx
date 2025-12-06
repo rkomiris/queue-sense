@@ -1,8 +1,10 @@
-import { FormEvent, useState } from 'react';
+import { CSSProperties, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Toast } from '../components/Toast';
 import { Area, AreaChart, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import heroBg from '../assets/background.jpg';
+import heroIcon from '../assets/icon.jpg';
 
 const featurePillars = [
   {
@@ -73,6 +75,14 @@ const waitCurve = [
   { slot: '6p', minutes: 41 },
 ];
 
+const engagementData = [
+  { label: 'Mon', notified: 72 },
+  { label: 'Tue', notified: 78 },
+  { label: 'Wed', notified: 82 },
+  { label: 'Thu', notified: 88 },
+  { label: 'Fri', notified: 94 },
+];
+
 export const LoginScreen = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -109,11 +119,15 @@ export const LoginScreen = () => {
     <div className="landing-shell">
       <header className="landing-header">
         <div className="logo-mark">
-          <div className="logo-dot" />
-          <span>QueueSense</span>
+          <img src={heroIcon} alt="QueueSense icon" />
+          <div>
+            <span>QueueSense</span>
+            <p>Predict wait OS</p>
+          </div>
         </div>
         <nav>
-          <a href="#story">Story</a>
+          <a href="#top">Home</a>
+          <a href="#story">Playbooks</a>
           <a href="#momentum">Momentum</a>
           <a href="#pricing">Pricing</a>
         </nav>
@@ -128,11 +142,11 @@ export const LoginScreen = () => {
       </header>
       <main className="landing-content">
         <section className="hero-grid" id="top">
-          <div className="hero-copy">
-            <p className="hero-eyebrow">Futuristic wait OS</p>
-            <h1>QueueSense predicts congestion before the line forms.</h1>
+          <div className="hero-panel">
+            <span className="hero-pill">Wait-time intelligence</span>
+            <h1>QueueSense spots wait spikes before the line forms.</h1>
             <p className="subtitle">
-              A neural decision surface tuned for clinics, DMV hubs, and campus command centers that crave fewer lines.
+              See the future state of every lobby, orchestrate staffing ahead of surges, and text visitors with living ETAs.
             </p>
             <div className="hero-cta">
               <button className="primary" onClick={() => setShowModal(true)}>
@@ -142,20 +156,58 @@ export const LoginScreen = () => {
                 Download deck
               </button>
             </div>
-            <div className="hero-stats">
-              <div>
-                <strong>97%</strong>
-                <span>visitors trust ETA</span>
-              </div>
-              <div>
-                <strong>35%</strong>
-                <span>wait drop in pilots</span>
-              </div>
-              <div>
-                <strong>8</strong>
-                <span>vertical playbooks</span>
-              </div>
+            <div className="hero-meta">
+              <p>97% visitors trust our ETA feed</p>
+              <p>35% drop in wait across pilots</p>
             </div>
+          </div>
+          <div className="hero-visual">
+            <article className="micro-card">
+              <p className="eyebrow">Live arrivals</p>
+              <ResponsiveContainer width="100%" height={110}>
+                <AreaChart data={growthData} margin={{ top: 6, bottom: 0, left: 0, right: 0 }}>
+                  <defs>
+                    <linearGradient id="microArea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#7b5bff" stopOpacity={0.6} />
+                      <stop offset="95%" stopColor="#7b5bff" stopOpacity={0.05} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="month" hide />
+                  <YAxis hide />
+                  <Area type="monotone" dataKey="users" stroke="#7b5bff" fill="url(#microArea)" strokeWidth={3} isAnimationActive={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+              <p className="micro-meta">
+                +41% arrivals vs last quarter <span>Demand keeps compounding</span>
+              </p>
+            </article>
+            <article className="micro-card">
+              <p className="eyebrow">Wait curve</p>
+              <ResponsiveContainer width="100%" height={110}>
+                <LineChart data={waitCurve} margin={{ top: 6, bottom: 0, left: 0, right: 0 }}>
+                  <XAxis dataKey="slot" hide />
+                  <YAxis hide />
+                  <Tooltip contentStyle={{ borderRadius: 16, border: '1px solid #dbe2ff' }} />
+                  <Line type="monotone" dataKey="minutes" stroke="#00c8b1" strokeWidth={3} dot={false} isAnimationActive={false} />
+                </LineChart>
+              </ResponsiveContainer>
+              <p className="micro-meta">
+                42% flatter peaks <span>AI pacing keeps lobbies calm</span>
+              </p>
+            </article>
+            <article className="micro-card">
+              <p className="eyebrow">Visitor nudges</p>
+              <ResponsiveContainer width="100%" height={110}>
+                <LineChart data={engagementData} margin={{ top: 6, bottom: 0, left: 0, right: 0 }}>
+                  <XAxis dataKey="label" hide />
+                  <YAxis hide />
+                  <Line type="monotone" dataKey="notified" stroke="#5e7bff" strokeWidth={3} dot={{ r: 3 }} isAnimationActive={false} />
+                </LineChart>
+              </ResponsiveContainer>
+              <p className="micro-meta">
+                78% visitors pre-notified <span>Auto messaging trims walk-ins</span>
+              </p>
+            </article>
           </div>
         </section>
 
@@ -174,11 +226,11 @@ export const LoginScreen = () => {
 
         <section className="story-section" id="story">
           <div className="story-text">
-            <p className="eyebrow">Product story</p>
-            <h3>Predict wait-times across civic life.</h3>
+            <p className="eyebrow">Rollout playbook</p>
+            <h3>Orchestrate calmer queues in three moves.</h3>
             <p>
-              Straight from the pitch deck: QueueSense fuses data inputs, analytics engines, and predictive modeling into a single operating layer so
-              cities orchestrate calmer queues.
+              Unify kiosk, mobile, and staff telemetry. Let our AI redeploy teams ahead of surges. Then text guests living ETAs so they arrive exactly
+              when rooms are free.
             </p>
           </div>
           <div className="pillars">
@@ -261,7 +313,7 @@ export const LoginScreen = () => {
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="login-modal" onClick={(event) => event.stopPropagation()}>
-            <div className="logo-dot" />
+            <img src={heroIcon} alt="QueueSense logo" className="form-logo" />
             <h2>Sign in</h2>
             <p className="subtitle">Use your QueueSense preview credentials to step inside the orchestration suite.</p>
             <form onSubmit={handleSubmit}>
@@ -286,7 +338,7 @@ export const LoginScreen = () => {
       {showTeam && (
         <div className="modal-overlay" onClick={() => setShowTeam(false)}>
           <div className="team-modal" onClick={(event) => event.stopPropagation()}>
-            <div className="logo-dot" />
+            <img src={heroIcon} alt="QueueSense logo" className="form-logo" />
             <h2>Meet the QueueSense crew</h2>
             <p className="subtitle">Visionary builders turning the Predict Wait-Times deck into a living product.</p>
             <ul className="team-list">
@@ -319,7 +371,7 @@ export const LoginScreen = () => {
             className="plan-modal"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="logo-dot" />
+            <img src={heroIcon} alt="QueueSense logo" className="form-logo" />
             <h2>{selectedPlan} plan</h2>
             {planSubmitted ? (
               <>
@@ -372,7 +424,7 @@ export const LoginScreen = () => {
       {showRegister && (
         <div className="modal-overlay" onClick={() => setShowRegister(false)}>
           <div className="plan-modal" onClick={(event) => event.stopPropagation()}>
-            <div className="logo-dot" />
+            <img src={heroIcon} alt="QueueSense logo" className="form-logo" />
             <h2>Request QueueSense access</h2>
             {registerDone ? (
               <>

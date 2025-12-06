@@ -2,42 +2,41 @@ import { useMemo, useState } from 'react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useSearchParams } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
-import { HeatmapGrid } from '../components/HeatmapGrid';
-import { arrivalCoachProfiles, clinicProfiles, serviceCards } from '../data/mockWaitTimes';
+import { arrivalCoachProfiles, campusProfiles, serviceCards } from '../data/mockWaitTimes';
 import { ArrivalCoach } from '../components/ArrivalCoach';
 import { getWaitDisplay } from '../utils/waitDisplay';
 
-export const ClinicScreen = () => {
-  const [alertEnabled, setAlertEnabled] = useState(true);
+export const CampusScreen = () => {
+  const [nudgesEnabled, setNudgesEnabled] = useState(true);
   const [params] = useSearchParams();
   const siteId = params.get('site');
-  const defaultCard = useMemo(() => serviceCards.find((card) => card.category === 'healthcare'), []);
+  const defaultCard = useMemo(() => serviceCards.find((card) => card.category === 'campus'), []);
   const activeCard = useMemo(
     () =>
-      serviceCards.find((card) => card.id === siteId && card.category === 'healthcare') ??
-      (defaultCard ?? serviceCards.find((card) => card.category === 'healthcare')),
+      serviceCards.find((card) => card.id === siteId && card.category === 'campus') ??
+      (defaultCard ?? serviceCards.find((card) => card.category === 'campus')),
     [siteId, defaultCard]
   );
   const profile =
-    (activeCard && clinicProfiles[activeCard.id]) ??
-    (defaultCard && clinicProfiles[defaultCard.id]) ??
-    clinicProfiles['urgent-care'];
+    (activeCard && campusProfiles[activeCard.id]) ??
+    (defaultCard && campusProfiles[defaultCard.id]) ??
+    campusProfiles.campus;
   const coachProfile = activeCard ? arrivalCoachProfiles[activeCard.id] : undefined;
-  const [intent, setIntent] = useState<'now' | 'soon' | 'plan'>('now');
-  const [autoNudge, setAutoNudge] = useState(false);
   const fallbackWait = {
     primary: `${profile.currentWait}`,
     unit: 'min',
-    message: profile.narrative,
+    message: '',
     status: 'open' as const,
     opensAt: '',
   };
   const waitDisplay = activeCard ? getWaitDisplay(activeCard, profile.currentWait) : fallbackWait;
-  const waitMessage = waitDisplay.status === 'open' ? profile.narrative : waitDisplay.message;
+  const isOpen = waitDisplay.status === 'open';
+  const [intent, setIntent] = useState<'now' | 'soon' | 'plan'>('now');
+  const [autoNudge, setAutoNudge] = useState(false);
 
   return (
     <section className="page-grid">
-      <PageHeader title={`${activeCard?.name ?? 'Clinic'} wait-time intelligence`} subtitle={profile.subtitle} />
+      <PageHeader title={`${activeCard?.name ?? 'Campus'} queue orchestration`} subtitle={profile.subtitle} />
       <div className="stat-row">
         <div className="stat-card">
           <p className="eyebrow">Current wait</p>
@@ -45,30 +44,30 @@ export const ClinicScreen = () => {
             {waitDisplay.primary}
             {waitDisplay.unit && <small> {waitDisplay.unit}</small>}
           </h2>
-          <p>{waitMessage}</p>
+          <p>{isOpen ? `Orientation support humming. Next lull at ${profile.nextLull}.` : waitDisplay.message}</p>
         </div>
         <div className="stat-card">
-          <p className="eyebrow">Lobby load</p>
-          <h2>{profile.stats.lobbyLoad} people</h2>
+          <p className="eyebrow">Digital adoption</p>
+          <h2>{Math.round(profile.digitalRate * 100)}%</h2>
           <p>
-            {profile.stats.currentPatients} active visits • {profile.stats.staffedRooms} rooms staffed
+            {profile.kiosksOnline} kiosks online • {profile.staffOnDuty} staff on duty
           </p>
-          <p>{Math.round(profile.stats.engagement * 100)}% opted into alerts</p>
+          <p>{profile.upcomingAppointments} appointments synced for the afternoon.</p>
         </div>
         <div className="stat-card toggle">
-          <p className="eyebrow">Notify me when</p>
-          <h3>Under 15 minutes</h3>
+          <p className="eyebrow">Auto nudges</p>
+          <h3>Remind when &lt; 10 min</h3>
           <label className="switch">
-            <input type="checkbox" checked={alertEnabled} onChange={() => setAlertEnabled((prev) => !prev)} />
+            <input type="checkbox" checked={nudgesEnabled} onChange={() => setNudgesEnabled((prev) => !prev)} />
             <span />
           </label>
-          <p>{alertEnabled ? 'We will ping you immediately.' : 'Alerts paused for now.'}</p>
+          <p>{nudgesEnabled ? 'Students get push + SMS updates.' : 'Nudges paused for the next hour.'}</p>
         </div>
       </div>
       <div className="chart-card">
         <div className="card-header">
-          <h3>Trend (last 6 hours)</h3>
-          <span>Live smoothing on</span>
+          <h3>Orientation flow (today)</h3>
+          <span>Predictive smoothing applied</span>
         </div>
         <ResponsiveContainer width="100%" height={260}>
           <LineChart data={profile.trend} margin={{ left: 0, right: 0, top: 10, bottom: 0 }}>
@@ -81,10 +80,23 @@ export const ClinicScreen = () => {
       </div>
       <div className="card">
         <div className="card-header">
-          <h3>Peak hour heatmap</h3>
-          <span>Dark = busiest</span>
+          <h3>Service line spotlight</h3>
+          <span>Wait vs throughput</span>
         </div>
-        <HeatmapGrid rows={profile.heatmap} />
+        <div className="campus-line-list">
+          {profile.serviceLines.map((line) => (
+            <article key={line.id} className="campus-line-card">
+              <div>
+                <p className="eyebrow">{line.label}</p>
+                <strong>{line.wait} min wait</strong>
+                <p>{line.detail}</p>
+              </div>
+              <div className="campus-line-chip">
+                <span>{line.throughput}/hr flow</span>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
       {coachProfile && (
         <ArrivalCoach

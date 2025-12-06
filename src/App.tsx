@@ -4,6 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import { AdminDashboard } from './screens/AdminDashboard';
 import { ClinicScreen } from './screens/Clinic';
+import { CampusScreen } from './screens/Campus';
 import { DmvScreen } from './screens/DMV';
 import { HomeDashboard } from './screens/Home';
 import { LoginScreen } from './screens/Login';
@@ -23,6 +24,7 @@ const App = () => (
               <Route path="/home" element={<HomeDashboard />} />
               <Route path="/clinic" element={<ClinicScreen />} />
               <Route path="/dmv" element={<DmvScreen />} />
+              <Route path="/campus" element={<CampusScreen />} />
             </Route>
             <Route element={<ProtectedRoute allowed={['org-admin']} />}>
               <Route path="/dashboard" element={<AdminDashboard />} />

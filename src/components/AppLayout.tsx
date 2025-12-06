@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { serviceCards, ServiceCard } from '../data/mockWaitTimes';
 import { LocationProvider } from '../context/LocationContext';
 import { resolveOrganization } from '../utils/env';
+import heroIcon from '../assets/icon.jpg';
 
 const categoryLabels: Record<ServiceCard['category'], string> = {
   healthcare: 'Healthcare',
@@ -56,6 +57,7 @@ export const AppLayout = () => {
           wait: card.waitTime,
           to: card.detailRoute,
           categoryLabel: categoryLabels[card.category],
+          detailPath: `${card.detailRoute}?site=${card.id}`,
         })),
     [accessibleCards, locationQuery]
   );
@@ -66,7 +68,7 @@ export const AppLayout = () => {
       <div className="app-shell">
         <aside className="sidebar">
         <div className="brand">
-          <div className="logo-dot" />
+          <img src={heroIcon} alt="QueueSense logo" className="brand-logo" />
           <div>
             <p className="brand-title">QueueSense</p>
             <p className="brand-sub">Predictive wait OS</p>
@@ -110,7 +112,7 @@ export const AppLayout = () => {
                 </div>
                 <div className="location-list">
                   {filteredLocations.map((location) => (
-                    <NavLink key={location.id} to={location.to} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
+                    <NavLink key={location.id} to={location.detailPath} className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
                       <div>
                         <span>{location.label}</span>
                         <p>

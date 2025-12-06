@@ -55,6 +55,7 @@ Once deployed, capture the site URL (e.g., `https://queuesense-demo.netlify.app`
 | Consumer Home | `/home` | Service cards with wait times, hero notifications, and CTA navigation. |
 | Clinic | `/clinic` | Predictive wait, trend chart, heatmap, and “alert me” toggle. |
 | DMV | `/dmv` | Appointment vs walk-in analysis and congestion meter. |
+| Campus | `/campus` | Student services orchestration, adoption stats, and lever spotlight. |
 | Notifications | `/notifications` | Sliding smart notification stack. |
 | Admin Dashboard | `/dashboard` | Overview metrics, chart, and insights (org-admin only). |
 | System Diagram | `/system` | Data inputs → analytics engine → outputs visualization. |
