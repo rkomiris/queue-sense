@@ -25,6 +25,9 @@ type RoiPlan = {
   projectedSavings: number;
   roi: number;
   paybackWeeks: number;
+  theme: 'Staffing' | 'Automation' | 'Engagement' | 'Intelligence';
+  owner: string;
+  effort: string;
 };
 
 const formatCurrency = (value: number) =>
@@ -36,9 +39,12 @@ const buildRoiPlans = (focus?: ServiceCard): RoiPlan[] => {
     focus?.state === 'rising' ? 1.25 : focus?.state === 'improving' ? 0.9 : 1;
   const target = focus?.category ?? 'any';
 
-  return optimizationLevers
-    .filter((lever) => lever.target === 'any' || lever.target === target)
-    .slice(0, 3)
+  const candidateLevers = optimizationLevers
+    .filter((lever) => (target === 'any' ? true : lever.target === 'any' || lever.target === target))
+    .sort((a, b) => b.roiMultiple - a.roiMultiple)
+    .slice(0, 5);
+
+  return candidateLevers
     .map((lever) => {
       const projectedSavings = Math.round(lever.projectedSavings * pressure * stateMultiplier);
       const investmentCost = Math.round(lever.investmentCost * (focus ? 1 : 0.95));
@@ -55,6 +61,9 @@ const buildRoiPlans = (focus?: ServiceCard): RoiPlan[] => {
         projectedSavings,
         roi,
         paybackWeeks,
+        theme: lever.theme,
+        owner: lever.owner,
+        effort: lever.effort,
       };
     });
 };
@@ -121,6 +130,7 @@ export const AdminDashboard = () => {
     [selectedLocation]
   );
   const [activePlanIds, setActivePlanIds] = useState<string[]>(() => dashboard.roi.map((plan) => plan.id));
+  const [collapsedThemes, setCollapsedThemes] = useState<Partial<Record<RoiPlan['theme'], boolean>>>({});
 
   useEffect(() => {
     setActivePlanIds(dashboard.roi.map((plan) => plan.id));
@@ -167,6 +177,32 @@ export const AdminDashboard = () => {
     const target = selectedLocation?.category;
     return locationBenchmarks.filter((row) => !target || row.category === target);
   }, [selectedLocation]);
+  const leverGroups = useMemo(() => {
+    const map = new Map<RoiPlan['theme'], RoiPlan[]>();
+    dashboard.roi.forEach((plan) => {
+      const existing = map.get(plan.theme) ?? [];
+      existing.push(plan);
+      map.set(plan.theme, existing);
+    });
+    return Array.from(map.entries()).map(([theme, plans]) => ({
+      theme,
+      plans: plans.sort((a, b) => b.roi - a.roi),
+    }));
+  }, [dashboard.roi]);
+  useEffect(() => {
+    setCollapsedThemes((prev) => {
+      const next = { ...prev };
+      leverGroups.forEach((group, index) => {
+        if (next[group.theme] === undefined) {
+          next[group.theme] = index > 0;
+        }
+      });
+      return next;
+    });
+  }, [leverGroups]);
+  const toggleGroupCollapse = (theme: RoiPlan['theme']) => {
+    setCollapsedThemes((prev) => ({ ...prev, [theme]: !prev[theme] }));
+  };
 
   return (
     <section className="page-grid">
@@ -250,18 +286,48 @@ export const AdminDashboard = () => {
         <div className="lever-panel">
           <p className="eyebrow">Scenario levers</p>
           <p className="muted-text">Toggle experiments to watch the runway respond.</p>
-          <div className="lever-toggles">
-            {dashboard.roi.map((plan) => (
-              <button
-                type="button"
-                key={plan.id}
-                className={`lever-toggle ${activePlanIds.includes(plan.id) ? 'active' : ''}`}
-                onClick={() => togglePlan(plan.id)}
-              >
-                <span>{plan.label}</span>
-                <small>{plan.roi.toFixed(1)}× ROI</small>
-              </button>
-            ))}
+          <div className="lever-groups">
+            {leverGroups.map((group) => {
+              const isCollapsed = collapsedThemes[group.theme] ?? false;
+              return (
+                <div key={group.theme} className={`lever-group ${isCollapsed ? 'collapsed' : ''}`}>
+                  <div className="lever-group-header">
+                    <p className="lever-group-label">{group.theme}</p>
+                    <button
+                      type="button"
+                      className="lever-collapse-btn"
+                      onClick={() => toggleGroupCollapse(group.theme)}
+                      aria-expanded={!isCollapsed}
+                    >
+                      {isCollapsed ? 'Expand' : 'Collapse'}
+                    </button>
+                  </div>
+                  {!isCollapsed && (
+                    <div className="lever-toggles">
+                      {group.plans.map((plan) => (
+                        <button
+                          type="button"
+                          key={plan.id}
+                          className={`lever-toggle ${activePlanIds.includes(plan.id) ? 'active' : ''}`}
+                          onClick={() => togglePlan(plan.id)}
+                        >
+                          <div className="lever-info">
+                            <span>{plan.label}</span>
+                            <small>
+                              {plan.owner} • {plan.effort}
+                            </small>
+                          </div>
+                          <div className="lever-meta">
+                            <strong>{plan.roi.toFixed(1)}× ROI</strong>
+                            <span>{formatCurrency(plan.projectedSavings)}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
           <div className="finops-summary">
             <div>

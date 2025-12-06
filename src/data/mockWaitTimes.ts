@@ -886,6 +886,9 @@ export type OptimizationLever = {
   investmentCost: number;
   projectedSavings: number;
   roiMultiple: number;
+  theme: 'Staffing' | 'Automation' | 'Engagement' | 'Intelligence';
+  owner: string;
+  effort: string;
 };
 
 export const optimizationLevers: OptimizationLever[] = [
@@ -898,6 +901,9 @@ export const optimizationLevers: OptimizationLever[] = [
     investmentCost: 5400,
     projectedSavings: 22000,
     roiMultiple: 4.1,
+    theme: 'Staffing',
+    owner: 'Clinical ops',
+    effort: '2-day spin-up',
   },
   {
     id: 'precheck-sms',
@@ -908,6 +914,9 @@ export const optimizationLevers: OptimizationLever[] = [
     investmentCost: 3200,
     projectedSavings: 16800,
     roiMultiple: 5.2,
+    theme: 'Engagement',
+    owner: 'Digital team',
+    effort: '1 sprint',
   },
   {
     id: 'campus-orchestration',
@@ -918,6 +927,9 @@ export const optimizationLevers: OptimizationLever[] = [
     investmentCost: 6100,
     projectedSavings: 19500,
     roiMultiple: 3.2,
+    theme: 'Automation',
+    owner: 'Student services',
+    effort: '3-week pilot',
   },
   {
     id: 'any-staffing',
@@ -928,6 +940,9 @@ export const optimizationLevers: OptimizationLever[] = [
     investmentCost: 1800,
     projectedSavings: 8400,
     roiMultiple: 3.6,
+    theme: 'Staffing',
+    owner: 'Ops excellence',
+    effort: 'Weekly sync',
   },
   {
     id: 'analytics-upskill',
@@ -938,6 +953,87 @@ export const optimizationLevers: OptimizationLever[] = [
     investmentCost: 2500,
     projectedSavings: 12600,
     roiMultiple: 4.0,
+    theme: 'Intelligence',
+    owner: 'Data team',
+    effort: '2-week sprint',
+  },
+  {
+    id: 'virtual-lobby',
+    target: 'healthcare',
+    label: 'Virtual lobby prep',
+    description: 'Move pre-visit paperwork to mobile and gate arrivals until rooms are ready.',
+    investmentHours: 14,
+    investmentCost: 4200,
+    projectedSavings: 18200,
+    roiMultiple: 4.3,
+    theme: 'Engagement',
+    owner: 'Patient comms',
+    effort: '10-day rollout',
+  },
+  {
+    id: 'gov-fastpass',
+    target: 'government',
+    label: 'Fast-pass appointment lane',
+    description: 'Allocate 2 DMVs windows for prepaid renewals and message citizens with VIP slots.',
+    investmentHours: 18,
+    investmentCost: 5100,
+    projectedSavings: 24400,
+    roiMultiple: 4.8,
+    theme: 'Engagement',
+    owner: 'Field ops',
+    effort: '3-week prep',
+  },
+  {
+    id: 'campus-coach',
+    target: 'campus',
+    label: 'Peer coach desk',
+    description: 'Train student workers to triage paperwork spikes before registrar bottlenecks.',
+    investmentHours: 22,
+    investmentCost: 4800,
+    projectedSavings: 20100,
+    roiMultiple: 4.2,
+    theme: 'Staffing',
+    owner: 'Student success',
+    effort: 'Semester rotation',
+  },
+  {
+    id: 'ai-concierge',
+    target: 'any',
+    label: 'AI concierge autopilot',
+    description: 'Route common visitor questions to AI chat so humans focus on escalations.',
+    investmentHours: 15,
+    investmentCost: 3900,
+    projectedSavings: 16200,
+    roiMultiple: 4.1,
+    theme: 'Automation',
+    owner: 'Experience design',
+    effort: 'Launch kit',
+  },
+  {
+    id: 'ops-sim-lab',
+    target: 'any',
+    label: 'Ops simulator lab',
+    description: 'Run monthly tabletop exercises using QueueSense forecasts to rehearse spikes.',
+    investmentHours: 12,
+    investmentCost: 2800,
+    projectedSavings: 13200,
+    roiMultiple: 4.7,
+    theme: 'Intelligence',
+    owner: 'Command center',
+    effort: 'Monthly ritual',
+  },
+  {
+    id: 'partner-routing',
+    target: 'any',
+    label: 'Partner appointment routing',
+    description: 'Sync partner calendars with QueueSense to direct low-acuity visits offsite.',
+    investmentHours: 24,
+    investmentCost: 6400,
+    projectedSavings: 31200,
+    roiMultiple: 4.9,
+    theme: 'Automation',
+    owner: 'Partnerships',
+    effort: 'API sprint',
   },
 ];
 
@@ -1126,25 +1222,117 @@ export const locationBenchmarks: LocationBenchmark[] = [
   },
 ];
 
-export const systemDiagram = [
-  {
-    id: 'inputs',
-    title: 'Data Inputs',
-    bullets: ['Kiosk sign-ins', 'Mobile check-ins', '3rd-party feeds', 'Staff scheduling'],
+export const systemContent = {
+  consumer: {
+    hero: {
+      eyebrow: 'Visitor clarity',
+      title: 'The calm lobby is powered behind the scenes.',
+      body: 'Every check-in, text reply, and staff move feeds the QueueSense brain so your visit feels predictable and personal.',
+      bullets: [
+        'Signals stay in sync so ETAs adjust before you notice a change.',
+        'AI keeps the right teammates in the right spot to shrink waits.',
+        'Notifications explain next steps across SMS, web, and kiosks.',
+      ],
+      primaryLabel: 'See how it stays calm',
+      secondaryLabel: 'Watch the story deck',
+    },
+    blueprint: [
+      {
+        id: 'capture',
+        title: 'Signal capture',
+        description: 'Kiosks, SMS, and mobile check-ins update your place in line instantly.',
+        bullets: ['Tap-in kiosks & QR scans', 'Two-way SMS concierge', 'Appointment & calendar sync'],
+        metric: { label: 'Updates/min', value: '8.4K' },
+      },
+      {
+        id: 'predict',
+        title: 'Predictive calm',
+        description: 'Wait curves refresh every few minutes so you always see an honest ETA.',
+        bullets: ['Location DNA models', 'Live load-balancing', 'Promise window monitoring'],
+        metric: { label: 'ETA confidence', value: '95%' },
+      },
+      {
+        id: 'nudge',
+        title: 'Smart nudges',
+        description: 'The system texts you when to head in, pause, or reroute to a shorter line.',
+        bullets: ['SMS + push notifications', 'Personalized prep steps', 'Delay + fast-lane offers'],
+        metric: { label: 'Delivery rate', value: '98%' },
+      },
+      {
+        id: 'guidance',
+        title: 'On-site guidance',
+        description: 'Hosts and signage stay in sync with the same data you see.',
+        bullets: ['Lobby screens refresh live', 'Staff tablets show priorities', 'Concierge chat keeps context'],
+        metric: { label: 'Happy visits', value: '4.8 / 5' },
+      },
+    ],
+    telemetry: [
+      { id: 'confidence', label: 'ETA confidence', value: '95%', detail: 'last 30 mins', trend: 'Holding steady' },
+      { id: 'signals', label: 'Signals flowing', value: '12 streams', detail: 'kiosk + SMS + partner', trend: 'All green' },
+      { id: 'assist', label: 'Concierge response', value: '35 sec', detail: 'avg human assist', trend: '-12% vs. yesterday' },
+      { id: 'calm', label: 'Calm score', value: '92', detail: 'ambient lobby feel', trend: '+7 vs. baseline' },
+    ],
+    streams: [
+      { id: 'arrival', title: 'Arrival insights', status: 'Live ETA feed', detail: 'Your spot adjusts every 4 min.', metric: 'Next ping in 2m' },
+      { id: 'notifications', title: 'Notification fabric', status: 'Delivering', detail: 'SMS + push updates to 18 visitor cohorts.', metric: '97% success' },
+      { id: 'concierge', title: 'Concierge chat', status: 'Online', detail: 'Live staff available for any question.', metric: 'Avg reply 35 sec' },
+      { id: 'guides', title: 'Playbook guidance', status: 'Ready', detail: 'Hosts see the same steps and promises as you.', metric: '5 assist cards active' },
+    ],
   },
-  {
-    id: 'engine',
-    title: 'Analytics Engine',
-    bullets: ['Contextual queue AI', 'Bottleneck detection', 'Anomaly guardrails'],
+  admin: {
+    hero: {
+      eyebrow: 'Live fabric',
+      title: 'Instrumented signals move from kiosk tap to predictive action.',
+      body: 'QueueSense keeps every channel synchronized: visitor intent, staffing promises, and anomaly guardrails. The outcome is a calm lobby and proactive crews before lines form.',
+      bullets: [
+        'Sub-2s ingestion across kiosks, SMS, apps, and partner APIs.',
+        'Forecasts remix every 4 minutes with contextual staffing knobs.',
+        'Notification fabric pushes living ETAs and exec-ready insights.',
+      ],
+      primaryLabel: 'Explore the stack',
+      secondaryLabel: 'View architecture deck',
+    },
+    blueprint: [
+      {
+        id: 'signals',
+        title: 'Signal fabric',
+        description: 'Every touchpoint pushes structured events within 2 seconds.',
+        bullets: ['Kiosk, SMS, concierge tablets', '3rd-party calendars & CRM feeds', 'Staff roster + IoT density signals'],
+        metric: { label: 'Signals/min', value: '14.2K' },
+      },
+      {
+        id: 'context',
+        title: 'Contextual intelligence',
+        description: 'Models blend arrivals, staffing, and promise windows to flag bottlenecks.',
+        bullets: ['Queue DNA model per location', 'Stress + abandonment predictors', 'Anomaly guardrails'],
+        metric: { label: 'Decisions/hr', value: '320' },
+      },
+      {
+        id: 'forecast',
+        title: 'Predictive runway',
+        description: 'Curves re-simulated every 4 minutes with live send-times.',
+        bullets: ['Arrival bands ± 3 min', 'Load balancing & playbooks', 'Auto-staff nudges'],
+        metric: { label: 'Forecast accuracy', value: '94%' },
+      },
+      {
+        id: 'experience',
+        title: 'Experience fabric',
+        description: 'Insights fan out to consumer touchpoints and exec surfaces instantly.',
+        bullets: ['Consumer app + SMS concierge', 'Ops dashboards & APIs', 'Notification fabric'],
+        metric: { label: 'Moments delivered', value: '2.1M /mo' },
+      },
+    ],
+    telemetry: [
+      { id: 'uptime', label: 'Signal uptime', value: '99.98%', detail: 'last 7 days', trend: '+0.02%' },
+      { id: 'forecast', label: 'Forecast refresh', value: '4m cadence', detail: 'average across sites', trend: 'Live' },
+      { id: 'guardrails', label: 'Guardrails active', value: '31 monitors', detail: 'staff + anomaly', trend: '3 new this week' },
+      { id: 'satisfaction', label: 'Visitor CSAT', value: '4.8 / 5', detail: 'post-visit pulse', trend: '+12 pts vs. baseline' },
+    ],
+    streams: [
+      { id: 'ingestion', title: 'Ingestion health', status: 'Optimal', detail: 'No dropped packets across kiosks + SMS', metric: '11.4K events / min' },
+      { id: 'automation', title: 'Automation studio', status: 'Routing playbooks ready', detail: '7 automations active · 2 in review', metric: '45 saved staff hours / wk' },
+      { id: 'notifications', title: 'Notification fabric', status: 'Green', detail: 'Real-time ETA updates flowing to 18 cohorts', metric: '97% delivery success' },
+      { id: 'insights', title: 'Command insights', status: 'Exec brief ready', detail: 'ROI, backlog, and staffing deltas refreshed now', metric: 'Next digest 14:00 ET' },
+    ],
   },
-  {
-    id: 'modeling',
-    title: 'Predictive Modeling',
-    bullets: ['Arrival curve forecasts', 'Load balancing', 'Proactive staffing'],
-  },
-  {
-    id: 'outputs',
-    title: 'Experience Outputs',
-    bullets: ['Consumer app', 'Org dashboards', 'Notification fabric'],
-  },
-];
+} as const;
