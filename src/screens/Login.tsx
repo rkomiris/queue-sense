@@ -1,9 +1,8 @@
-import { CSSProperties, FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Toast } from '../components/Toast';
 import { Area, AreaChart, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import heroBg from '../assets/background.jpg';
 import heroIcon from '../assets/icon.jpg';
 
 const featurePillars = [

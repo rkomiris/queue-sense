@@ -116,12 +116,15 @@ const buildLocationDashboard = (location: ServiceCard) => {
 
 export const AdminDashboard = () => {
   const { selectedLocation, setSelectedLocationId, availableLocations } = useLocationContext();
-  const dashboard = selectedLocation ? buildLocationDashboard(selectedLocation) : defaultDashboard;
-  const [activePlanIds, setActivePlanIds] = useState<string[]>(dashboard.roi.map((plan) => plan.id));
+  const dashboard = useMemo(
+    () => (selectedLocation ? buildLocationDashboard(selectedLocation) : defaultDashboard),
+    [selectedLocation]
+  );
+  const [activePlanIds, setActivePlanIds] = useState<string[]>(() => dashboard.roi.map((plan) => plan.id));
 
   useEffect(() => {
     setActivePlanIds(dashboard.roi.map((plan) => plan.id));
-  }, [selectedLocation?.id]);
+  }, [dashboard]);
 
   const handleFilterChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
